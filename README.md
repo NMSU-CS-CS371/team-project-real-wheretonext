@@ -1,3 +1,4 @@
 # team-project-real-wheretonext
-team-project-real-wheretonext created by GitHub Classroom
-//to be updated
+to compile --> javac -cp gson-2.10.1.jar YelpAPIRoughDraft.java
+to run --> java -cp .:gson-2.10.1.jar YelpAPIRoughDraft
+..
