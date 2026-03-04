@@ -14,19 +14,19 @@ public class YelpAPIRoughDraft {
 
 
         //API key  
-        String apiKey = "CM3X05XSHLW07MREbVm4tT0VuGKI6qSelY5rOo11z6i2Xj8e7ptPqV4VPZ8T2g8-gz_r5HeSRENmlT_nvqjA5sBG1AQK1hdFKlxgUXdsrnTGgIDDgHpKbEkcQA-WaXYx";
+        //String apiKey = "CM3X05XSHLW07MREbVm4tT0VuGKI6qSelY5rOo11z6i2Xj8e7ptPqV4VPZ8T2g8-gz_r5HeSRENmlT_nvqjA5sBG1AQK1hdFKlxgUXdsrnTGgIDDgHpKbEkcQA-WaXYx";
 
 
 
         //Code if we want to read API key from environment variable instead of hardcoding it in the code (for security reasons)
-/*
+
         // Read API key from environment variable
         String apiKey = System.getenv("YELP_API_KEY");
         if (apiKey == null) {
             System.out.println("API key not found! Set YELP_API_KEY environment variable.");
             return;
         }
-*/
+
 
         Scanner scanner = new Scanner(System.in);
 
