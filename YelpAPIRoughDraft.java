@@ -60,6 +60,12 @@ public class YelpAPIRoughDraft {
             for (JsonElement b : businesses) {
                 JsonObject biz = b.getAsJsonObject();
 
+                int reviewCount = biz.has("review_count") ? biz.get("review_count").getAsInt() : 0; // gets review count
+
+                if (reviewCount < 20) {
+                    continue; // skip businesses with fewer than 20 reviews
+                }
+
                 String name = biz.has("name") ? biz.get("name").getAsString() : "N/A";
                 double rating = biz.has("rating") ? biz.get("rating").getAsDouble() : 0.0;
                 String price = biz.has("price") ? biz.get("price").getAsString() : "N/A";
@@ -79,6 +85,7 @@ public class YelpAPIRoughDraft {
                 System.out.println("Name: " + name);
                 System.out.println("Rating: " + rating);
                 System.out.println("Price: " + price);
+                System.out.println("Review: " + reviewCount);
                 System.out.println("Address: " + address);
                 System.out.println("--------------------------");
             }
