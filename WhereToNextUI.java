@@ -1,4 +1,4 @@
-import java.awt.*;              // GUI layouts, colors, fonts
+import java.awt.*;             // GUI layouts, colors, fonts
 import javax.swing.*;          // Swing UI components (JFrame, JButton, etc.)
 import java.net.URI;           // For building URLs
 import java.net.http.*;        // Java HTTP client for sending requests
@@ -106,20 +106,14 @@ public class WhereToNextUI extends JFrame {
 
     // ────────────────────────────────────────────────
     // Fetch businesses from Yelp API
-    // - Sends request for each category (hotels, food, activities)
+    // - Sends request for each category (hotels, food, attractions)
     // - Filters out low-rated or low-review businesses
     // - Keeps only top 5 per category
     // - Extracts name, rating, reviews, address
     // ────────────────────────────────────────────────
     private void fetchTopBusinesses(String city) {
-
-        String apiKey = System.getenv("YELP_API_KEY"); // Get API key
-        if (apiKey == null) {
-            JOptionPane.showMessageDialog(this, "API key not found!");
-            return;
-        }
-
-        String[] terms = {"hotels", "food", "activities"}; // Search categories
+        String apiKey = "08ZFB6tYGsw2aek1E-PKQlME7pCTqnwwEe8qiDBa_JTmFUgS7IzHCgAxCYh2UF0MGdCKXHR_8qlMLuUUQQ3j_Si1cJgNoeV8liAmgNhrnOknAaVOlJXgy1iZa6bBaXYx";
+        String[] terms = {"hotels", "food", "attractions"}; // Search categories
         StringBuilder results = new StringBuilder();       // Store final text
 
         // Loop through each category
@@ -158,7 +152,7 @@ public class WhereToNextUI extends JFrame {
 
                         // Get review count
                         int reviewCount = biz.has("review_count") ? biz.get("review_count").getAsInt() : 0;
-                        if (reviewCount <= 50) continue; // Skip if too few reviews
+                        if (reviewCount <= 20) continue; // Skip if too few reviews
 
                         // Get name
                         String name = biz.has("name") ? biz.get("name").getAsString() : "N/A";
@@ -186,7 +180,7 @@ public class WhereToNextUI extends JFrame {
                                .append("\n\n");
 
                         printed++;
-                        if (printed == 5) break; // Stop after 5
+                        if (printed == 10) break; // Stop after 10
                     }
                     results.append("\n");
 
