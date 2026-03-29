@@ -35,8 +35,12 @@ public class YelpAPIRoughDraft {
 
         System.out.print("Enter search term (e.g., restaurants, pizza): ");
         String term = scanner.nextLine();
+<<<<<<< Updated upstream
 
         // Encode spaces
+=======
+        // Replace spaces with %20 so the URL is valid
+>>>>>>> Stashed changes
         city = city.replace(" ", "%20");
         term = term.replace(" ", "%20");
 
