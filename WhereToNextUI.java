@@ -1,166 +1,195 @@
-import java.awt.*;             // GUI layouts, colors, fonts
-import javax.swing.*;          // Swing UI components (JFrame, JButton, etc.)
-import java.net.URI;           // For building URLs
-import java.net.http.*;        // Java HTTP client for sending requests
-import java.io.IOException;    // Handle input/output exceptions
-import com.google.gson.*;      // Parse JSON responses
+import java.awt.*;
+import java.awt.event.*;
+import javax.swing.*;
+import java.net.URI;
+import java.net.http.*;
+import java.io.IOException;
+import com.google.gson.*;
+import java.util.ArrayList;
+import java.util.List;
+
+// Custom panel to paint a background image stretched to fill the window
+class BackgroundPanel extends JPanel {
+    private Image backgroundImage;
+
+    public BackgroundPanel(String path) {
+        try {
+            backgroundImage = Toolkit.getDefaultToolkit().getImage(path);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    @Override
+    protected void paintComponent(Graphics g) {
+        super.paintComponent(g);
+        if (backgroundImage != null) {
+            g.drawImage(backgroundImage, 0, 0, getWidth(), getHeight(), this);
+        }
+    }
+}
 
 public class WhereToNextUI extends JFrame {
 
-    // ────────────────────────────────────────────────
-    // Constructor → Builds the first screen (city input)
-    // ────────────────────────────────────────────────
     public WhereToNextUI() {
+        setTitle("WhereToNext");
+        setSize(900, 700); // smaller window
+        setLocationRelativeTo(null); // center window
+        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
-        // ── Window setup ──
-        setTitle("WhereToNext");                   // Window title
-        setExtendedState(JFrame.MAXIMIZED_BOTH);  // Open fullscreen
-        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE); // Exit app when closed
+        // Main panel with background
+        BackgroundPanel mainPanel = new BackgroundPanel("images/background.jpg");
+        mainPanel.setLayout(new BoxLayout(mainPanel, BoxLayout.Y_AXIS));
 
-        // ── Main panel (root container for all UI) ──
-        JPanel mainPanel = new JPanel(new BorderLayout());
-        mainPanel.setBackground(new Color(245, 245, 245));  // Light gray
-        mainPanel.setBorder(BorderFactory.createEmptyBorder(40, 40, 40, 40)); // Padding
+        // Spacer to move title down
+        mainPanel.add(Box.createVerticalStrut(80));
 
-        // ── Title label at the top ──
+        // Title label
         JLabel titleLabel = new JLabel("🌍  Where To Next?", SwingConstants.CENTER);
-        titleLabel.setFont(new Font("SansSerif", Font.BOLD, 50)); // Large font
-        mainPanel.add(titleLabel, BorderLayout.NORTH); // Place at top
+        titleLabel.setFont(new Font("SansSerif", Font.BOLD, 50));
+        titleLabel.setForeground(Color.WHITE);
+        titleLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
+        mainPanel.add(titleLabel);
 
-        // ── Center panel for input (city field + button) ──
-        JPanel centerPanel = new JPanel();
-        centerPanel.setLayout(new BoxLayout(centerPanel, BoxLayout.Y_AXIS)); // Stack vertically
-        centerPanel.setBackground(new Color(245, 245, 245));
+        mainPanel.add(Box.createVerticalStrut(50));
+
+        // Input panel with solid background
+        JPanel inputPanel = new JPanel();
+        inputPanel.setLayout(new BoxLayout(inputPanel, BoxLayout.Y_AXIS));
+        inputPanel.setBackground(new Color(255, 255, 255, 220)); // solid background
+        inputPanel.setBorder(BorderFactory.createEmptyBorder(20, 40, 20, 40));
+        inputPanel.setAlignmentX(Component.CENTER_ALIGNMENT);
+        inputPanel.setMaximumSize(new Dimension(500, 400));
 
         // Prompt label
         JLabel promptLabel = new JLabel("Enter your destination city:");
         promptLabel.setFont(new Font("SansSerif", Font.PLAIN, 18));
-        promptLabel.setAlignmentX(Component.CENTER_ALIGNMENT); // Center horizontally
+        promptLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
 
-        // Text field for user to type city
+        // Text field
         JTextField cityField = new JTextField();
-        cityField.setFont(new Font("SansSerif", Font.PLAIN, 20)); // Larger text
-        cityField.setMaximumSize(new Dimension(600, 50));          // Limit width
-        cityField.setHorizontalAlignment(JTextField.CENTER);      // Center text
+        cityField.setFont(new Font("SansSerif", Font.PLAIN, 20));
+        cityField.setMaximumSize(new Dimension(400, 40));
+        cityField.setHorizontalAlignment(JTextField.CENTER);
 
-        // Button to fetch top businesses
+        // Checkboxes
+        JCheckBox hotelsCheckBox = new JCheckBox("Hotels");
+        JCheckBox restaurantsCheckBox = new JCheckBox("Restaurants");
+        JCheckBox eventsCheckBox = new JCheckBox("Events");
+
+        hotelsCheckBox.setSelected(true); // auto-select hotels
+        hotelsCheckBox.setAlignmentX(Component.CENTER_ALIGNMENT);
+        restaurantsCheckBox.setAlignmentX(Component.CENTER_ALIGNMENT);
+        eventsCheckBox.setAlignmentX(Component.CENTER_ALIGNMENT);
+
+        // Search button
         JButton goButton = new JButton("Let's Go →");
-        goButton.setMaximumSize(new Dimension(220, 55));          // Button size
-        goButton.setFont(new Font("SansSerif", Font.BOLD, 18));  // Bold text
-        goButton.setAlignmentX(Component.CENTER_ALIGNMENT);      // Center button
+        goButton.setFont(new Font("SansSerif", Font.BOLD, 18));
+        goButton.setAlignmentX(Component.CENTER_ALIGNMENT);
 
-        // Add components with spacing
-        centerPanel.add(Box.createVerticalGlue());               // Push content toward center
-        centerPanel.add(promptLabel);
-        centerPanel.add(Box.createRigidArea(new Dimension(0, 15))); // Space
-        centerPanel.add(cityField);
-        centerPanel.add(Box.createRigidArea(new Dimension(0, 25)));
-        centerPanel.add(goButton);
-        centerPanel.add(Box.createVerticalGlue());
+        // Add components to input panel
+        inputPanel.add(promptLabel);
+        inputPanel.add(Box.createVerticalStrut(10));
+        inputPanel.add(cityField);
+        inputPanel.add(Box.createVerticalStrut(15));
+        inputPanel.add(hotelsCheckBox);
+        inputPanel.add(restaurantsCheckBox);
+        inputPanel.add(eventsCheckBox);
+        inputPanel.add(Box.createVerticalStrut(20));
+        inputPanel.add(goButton);
 
-        // Add center panel to main panel
-        mainPanel.add(centerPanel, BorderLayout.CENTER);
+        // Add input panel to main panel
+        mainPanel.add(inputPanel);
+        mainPanel.add(Box.createVerticalGlue());
 
-        // Add main panel to the JFrame
         add(mainPanel);
-        setVisible(true); // Show window
+        setVisible(true);
 
-        // ── Button click action ──
-        goButton.addActionListener(e -> {
-            String city = cityField.getText().trim(); // Get typed city
-            if (city.isEmpty()) {                    // Check for empty input
+        // Action listener for search
+        ActionListener searchAction = e -> {
+            String city = cityField.getText().trim();
+            if (city.isEmpty()) {
                 JOptionPane.showMessageDialog(this, "Please enter a city!");
                 return;
             }
-            fetchTopBusinesses(city);               // Call API method
-        });
+            List<String> terms = new ArrayList<>();
+            if (hotelsCheckBox.isSelected()) terms.add("hotels");
+            if (restaurantsCheckBox.isSelected()) terms.add("restaurants");
+            if (eventsCheckBox.isSelected()) terms.add("events");
+
+            if (terms.isEmpty()) {
+                JOptionPane.showMessageDialog(this, "Please select at least one category!");
+                return;
+            }
+
+            fetchTopBusinesses(city, terms);
+        };
+
+        goButton.addActionListener(searchAction);
+
+        // Trigger search on Enter key
+        cityField.addActionListener(searchAction);
     }
 
-    // ────────────────────────────────────────────────
-    // Show results screen
-    // Replace input screen with a scrollable text area
-    // ────────────────────────────────────────────────
     private void showResultsUI(String resultsText) {
         JPanel resultsPanel = new JPanel(new BorderLayout());
-        resultsPanel.setBackground(new Color(245, 245, 245));
+        resultsPanel.setBackground(new Color(123, 50, 250));
 
-        // Title at top
         JLabel title = new JLabel("Top Results", SwingConstants.CENTER);
         title.setFont(new Font("SansSerif", Font.BOLD, 40));
         resultsPanel.add(title, BorderLayout.NORTH);
 
-        // Scrollable text area to display results
         JTextArea textArea = new JTextArea(resultsText);
-        textArea.setFont(new Font("Monospaced", Font.PLAIN, 16)); // Keep columns aligned
-        textArea.setEditable(false);    // User cannot edit
-        textArea.setLineWrap(true);     // Wrap long lines
+        textArea.setFont(new Font("Monospaced", Font.PLAIN, 16));
+        textArea.setEditable(false);
+        textArea.setLineWrap(true);
         textArea.setWrapStyleWord(true);
 
         JScrollPane scrollPane = new JScrollPane(textArea);
         resultsPanel.add(scrollPane, BorderLayout.CENTER);
 
-        // Swap the content to the results panel
         setContentPane(resultsPanel);
-        revalidate(); // Refresh the window
+        revalidate();
     }
 
-    // ────────────────────────────────────────────────
-    // Fetch businesses from Yelp API
-    // - Sends request for each category (hotels, food, attractions)
-    // - Filters out low-rated or low-review businesses
-    // - Keeps only top 5 per category
-    // - Extracts name, rating, reviews, address
-    // ────────────────────────────────────────────────
-    private void fetchTopBusinesses(String city) {
-        String apiKey = "08ZFB6tYGsw2aek1E-PKQlME7pCTqnwwEe8qiDBa_JTmFUgS7IzHCgAxCYh2UF0MGdCKXHR_8qlMLuUUQQ3j_Si1cJgNoeV8liAmgNhrnOknAaVOlJXgy1iZa6bBaXYx";
-        String[] terms = {"hotels", "food", "attractions"}; // Search categories
-        StringBuilder results = new StringBuilder();       // Store final text
+    private void fetchTopBusinesses(String city, List<String> terms) {
+        String apiKey = System.getenv("YELP_API_KEY");
+        if (apiKey == null) {
+            JOptionPane.showMessageDialog(this, "YELP_API_KEY not found in environment variables!");
+            return;
+        }
 
-        // Loop through each category
+        StringBuilder results = new StringBuilder();
+
         for (String term : terms) {
             try {
-                // Build API URL
                 String url = "https://api.yelp.com/v3/businesses/search?location="
-                        + city.replace(" ", "%20")  // Encode spaces
+                        + city.replace(" ", "%20")
                         + "&term=" + term
-                        + "&limit=50&sort_by=rating"; // Get up to 50, sorted by rating
+                        + "&limit=50&sort_by=rating";
 
-                // Create HTTP request
                 HttpClient client = HttpClient.newHttpClient();
                 HttpRequest request = HttpRequest.newBuilder()
                         .uri(URI.create(url))
-                        .header("Authorization", "Bearer " + apiKey) // Auth header
+                        .header("Authorization", "Bearer " + apiKey)
                         .GET()
                         .build();
 
-                // Send request and get response as string
-                HttpResponse<String> response =
-                        client.send(request, HttpResponse.BodyHandlers.ofString());
+                HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
 
-                // Parse JSON
                 JsonObject json = JsonParser.parseString(response.body()).getAsJsonObject();
-
                 if (json.has("businesses")) {
                     JsonArray businesses = json.getAsJsonArray("businesses");
-
                     results.append("---- Top ").append(term).append(" in ").append(city).append(" ----\n");
 
-                    int printed = 0; // Limit top 5
-
+                    int printed = 0;
                     for (JsonElement b : businesses) {
                         JsonObject biz = b.getAsJsonObject();
-
-                        // Get review count
                         int reviewCount = biz.has("review_count") ? biz.get("review_count").getAsInt() : 0;
-                        if (reviewCount <= 20) continue; // Skip if too few reviews
+                        if (reviewCount <= 20) continue;
 
-                        // Get name
                         String name = biz.has("name") ? biz.get("name").getAsString() : "N/A";
-
-                        // Get rating
                         double rating = biz.has("rating") ? biz.get("rating").getAsDouble() : 0.0;
-
-                        // Get full address
                         String address = "";
                         if (biz.has("location") && !biz.get("location").isJsonNull()) {
                             JsonObject location = biz.getAsJsonObject("location");
@@ -172,7 +201,6 @@ public class WhereToNextUI extends JFrame {
                             }
                         }
 
-                        // Add to results string
                         results.append(name)
                                .append(" | Rating: ").append(rating)
                                .append(" | Reviews: ").append(reviewCount)
@@ -180,27 +208,22 @@ public class WhereToNextUI extends JFrame {
                                .append("\n\n");
 
                         printed++;
-                        if (printed == 10) break; // Stop after 10
+                        if (printed == 10) break;
                     }
                     results.append("\n");
-
                 } else {
                     results.append("No ").append(term).append(" found in ").append(city).append("\n\n");
                 }
 
             } catch (IOException | InterruptedException ex) {
-                ex.printStackTrace(); // Print errors if API fails
+                ex.printStackTrace();
             }
         }
 
-        // Show all results in UI
         showResultsUI(results.toString());
     }
 
-    // ────────────────────────────────────────────────
-    // Main entry point
-    // ────────────────────────────────────────────────
     public static void main(String[] args) {
-        SwingUtilities.invokeLater(() -> new WhereToNextUI()); // Start UI on correct thread
+        SwingUtilities.invokeLater(() -> new WhereToNextUI());
     }
 }
