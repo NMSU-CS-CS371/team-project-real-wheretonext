@@ -57,7 +57,12 @@ public class BusinessDetailsPage extends JPanel {
         centerPanel.add(imageLabel, BorderLayout.NORTH);
 
         // Text area for details
-        JTextArea detailsArea = new JTextArea(info);
+        //JTextArea detailsArea = new JTextArea(info);
+        String displayText = String.join("\n", java.util.Arrays.stream(lines)
+         .filter(l -> !l.startsWith("ImageURL:"))
+         .toArray(String[]::new));
+        JTextArea detailsArea = new JTextArea(displayText);
+        
         detailsArea.setEditable(false);
         detailsArea.setLineWrap(true);
         detailsArea.setWrapStyleWord(true);
