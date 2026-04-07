@@ -50,7 +50,6 @@ public class WhereToNextUI extends JFrame {
         inputPanel.add(Box.createVerticalStrut(10));
         inputPanel.add(cityField);
         inputPanel.add(Box.createVerticalStrut(15));
-        inputPanel.add(Box.createVerticalStrut(20));
         inputPanel.add(goButton);
 
         mainPanel.add(inputPanel);
@@ -59,7 +58,7 @@ public class WhereToNextUI extends JFrame {
         setVisible(true);
 
         YelpApiClient apiClient = new YelpApiClient("08ZFB6tYGsw2aek1E-PKQlME7pCTqnwwEe8qiDBa_JTmFUgS7IzHCgAxCYh2UF0MGdCKXHR_8qlMLuUUQQ3j_Si1cJgNoeV8liAmgNhrnOknAaVOlJXgy1iZa6bBaXYx");
-        ResultsPanel resultsPanel = new ResultsPanel();
+        ResultsPanel resultsPanel = new ResultsPanel(this, mainPanel);
         SearchController controller = new SearchController(apiClient, resultsPanel);
 
         ActionListener searchAction = e -> {
@@ -68,9 +67,10 @@ public class WhereToNextUI extends JFrame {
                 JOptionPane.showMessageDialog(this, "Please enter a city!");
                 return;
             }
-        List<String> terms = List.of("hotels", "restaurants", "activities");
+            List<String> terms = List.of("hotels", "restaurants", "activities");
 
             controller.onSearch(city, terms);
+            resultsPanel.setCity(city);
             setContentPane(resultsPanel);
             revalidate();
         };
