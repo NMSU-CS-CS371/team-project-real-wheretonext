@@ -1,6 +1,9 @@
 import java.awt.*;
 import java.awt.event.*;
+import java.awt.image.BufferedImage;
+import java.net.URL;
 import java.util.Map;
+import javax.imageio.ImageIO;
 import javax.swing.*;
 
 public class ResultsPanel extends JPanel {
@@ -87,9 +90,13 @@ public class ResultsPanel extends JPanel {
             String name = lines.length > 0 ? lines[0] : "Unknown";
             String details = "";
             String extra = "";
+            String imageUrl = "";
 
             for (String line : lines) {
-                if (line.startsWith("ImageURL:")) continue;
+                if (line.startsWith("ImageURL:")) {
+                    imageUrl = line.replace("ImageURL:", "").trim();
+                    continue;
+                }
                 if (details.isEmpty() && !line.equals(name)) {
                     details = line;
                 } else if (extra.isEmpty() && !line.equals(name) && !line.equals(details)) {
@@ -98,17 +105,48 @@ public class ResultsPanel extends JPanel {
             }
 
             JPanel card = new JPanel();
-            card.setLayout(new BorderLayout());
+            card.setLayout(new BorderLayout(12, 0));
             card.setBackground(Color.WHITE);
             card.setBorder(BorderFactory.createCompoundBorder(
                 BorderFactory.createEmptyBorder(6, 0, 6, 0),
                 BorderFactory.createCompoundBorder(
                     BorderFactory.createLineBorder(new Color(220, 220, 220), 1, true),
-                    BorderFactory.createEmptyBorder(14, 18, 14, 18)
+                    BorderFactory.createEmptyBorder(10, 12, 10, 12)
                 )
             ));
-            card.setMaximumSize(new Dimension(Integer.MAX_VALUE, 100));
+            card.setMaximumSize(new Dimension(Integer.MAX_VALUE, 90));
             card.setAlignmentX(Component.CENTER_ALIGNMENT);
+
+            // Thumbnail
+            JLabel thumbLabel = new JLabel();
+            thumbLabel.setPreferredSize(new Dimension(80, 70));
+            thumbLabel.setHorizontalAlignment(SwingConstants.CENTER);
+            thumbLabel.setBackground(new Color(240, 240, 240));
+            thumbLabel.setOpaque(true);
+
+            if (!imageUrl.isEmpty()) {
+                final String finalUrl = imageUrl;
+                new SwingWorker<ImageIcon, Void>() {
+                    @Override
+                    protected ImageIcon doInBackground() throws Exception {
+                        BufferedImage img = ImageIO.read(new URL(finalUrl));
+                        Image scaled = img.getScaledInstance(80, 70, Image.SCALE_SMOOTH);
+                        return new ImageIcon(scaled);
+                    }
+                    @Override
+                    protected void done() {
+                        try {
+                            thumbLabel.setIcon(get());
+                            thumbLabel.revalidate();
+                            thumbLabel.repaint();
+                        } catch (Exception ex) {
+                            ex.printStackTrace();
+                        }
+                    }
+                }.execute();
+            }
+
+            card.add(thumbLabel, BorderLayout.WEST);
 
             JLabel nameLabel = new JLabel(name);
             nameLabel.setFont(new Font("SansSerif", Font.BOLD, 16));
