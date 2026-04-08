@@ -1,8 +1,5 @@
-# team-project-real-wheretonext
-WhereToNext is a Java Swing app that helps you explore cities you  
-would like to travel to. It shows top hotels, restaurants, and 
-activities using the Yelp API, lets you view details for each 
-business, and add them to a personal itinerary.
+# Wheretonext
+WhereToNext is a Java Swing app that helps you explore cities you would like to travel to. It shows top hotels, restaurants, and activities using the Yelp API, lets you view details for each business, and add them to a personal itinerary.
 
 ## Features
 - Search for a city and see top businesses.  
