@@ -19,7 +19,7 @@ import javax.swing.*;
 
 public class BusinessDetailsPage extends JPanel {
 
-    public BusinessDetailsPage(String info) {
+    public BusinessDetailsPage(String info, ItineraryPage itinerary) {
         // Main layout
         setLayout(new BorderLayout());
         setBackground(Color.WHITE); // white background
@@ -98,9 +98,25 @@ public class BusinessDetailsPage extends JPanel {
             SwingUtilities.getWindowAncestor(this).dispose(); // close this window
         });
 
+        // Bottom panel holds the back button and add to itinerary button
         JPanel bottomPanel = new JPanel();
         bottomPanel.setBackground(Color.WHITE);
         bottomPanel.add(backButton);
         add(bottomPanel, BorderLayout.SOUTH);
+
+        // Add to Itinerary button
+        JButton addToItineraryBtn = new JButton("＋ Add to Itinerary");
+        addToItineraryBtn.setFont(new Font("SansSerif", Font.BOLD, 14));
+        addToItineraryBtn.setBackground(new Color(50, 120, 200));
+        addToItineraryBtn.setForeground(Color.WHITE);
+        addToItineraryBtn.setOpaque(true);
+        addToItineraryBtn.setFocusPainted(false);
+        addToItineraryBtn.addActionListener(e -> {
+        itinerary.addBusiness(info);
+        addToItineraryBtn.setText("✓ Saved!");
+        addToItineraryBtn.setBackground(new Color(40, 160, 80));
+        addToItineraryBtn.setEnabled(false);
+    });
+    bottomPanel.add(addToItineraryBtn);
     }
 }

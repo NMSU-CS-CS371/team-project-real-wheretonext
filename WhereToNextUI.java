@@ -82,7 +82,8 @@ public class WhereToNextUI extends JFrame {
 
         // Set up Yelp API client, results panel, and search controller
         YelpApiClient apiClient = new YelpApiClient("08ZFB6tYGsw2aek1E-PKQlME7pCTqnwwEe8qiDBa_JTmFUgS7IzHCgAxCYh2UF0MGdCKXHR_8qlMLuUUQQ3j_Si1cJgNoeV8liAmgNhrnOknAaVOlJXgy1iZa6bBaXYx");
-        ResultsPanel resultsPanel = new ResultsPanel(this, mainPanel);
+        ItineraryPage itineraryPage = new ItineraryPage(this, mainPanel);
+        ResultsPanel resultsPanel = new ResultsPanel(this, mainPanel, itineraryPage);
         SearchController controller = new SearchController(apiClient, resultsPanel);
         
         // Action for searching when user clicks button or presses Enter

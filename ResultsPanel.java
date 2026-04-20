@@ -24,9 +24,13 @@ public class ResultsPanel extends JPanel {
     private JPanel restaurantsPanel;
     private JPanel activitiesPanel;
     private JLabel cityLabel;
+    private ItineraryPage itinerary;
+
+    
 
     // Constructor: set up layout, top bar, tabs, and back button
-    public ResultsPanel(JFrame parent, JPanel mainPanel) {
+    public ResultsPanel(JFrame parent, JPanel mainPanel, ItineraryPage itinerary) {
+        this.itinerary = itinerary;
         setLayout(new BorderLayout());
         setBackground(Color.WHITE);
 
@@ -42,6 +46,28 @@ public class ResultsPanel extends JPanel {
             parent.revalidate();
         });
         topBar.add(backButton, BorderLayout.WEST);
+
+        // Itinerary button
+        JButton itineraryBtn = new JButton("📋 Itinerary");
+        itineraryBtn.setFont(new Font("SansSerif", Font.PLAIN, 14));
+        itineraryBtn.setForeground(new Color(50, 120, 200));
+        itineraryBtn.setBackground(new Color(235, 244, 255));
+        itineraryBtn.setOpaque(true);
+        itineraryBtn.setBorderPainted(false);
+        itineraryBtn.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+        itineraryBtn.addActionListener(e -> {
+            parent.setContentPane(itinerary);
+            parent.revalidate();
+        });
+
+        JPanel leftButtons = new JPanel(new FlowLayout(FlowLayout.LEFT, 0, 0));
+        leftButtons.setBackground(Color.WHITE);
+        leftButtons.add(backButton);
+        leftButtons.add(Box.createHorizontalStrut(8));
+        leftButtons.add(itineraryBtn);
+
+        topBar.add(leftButtons, BorderLayout.WEST);
+
 
         // Title of results
         JLabel title = new JLabel("Top Results", SwingConstants.CENTER);
@@ -216,7 +242,8 @@ public class ResultsPanel extends JPanel {
             
             // Open business details in a new window
             viewBtn.addActionListener(e -> {
-                BusinessDetailsPage detailsPage = new BusinessDetailsPage(bizInfo);
+                
+BusinessDetailsPage detailsPage = new BusinessDetailsPage(bizInfo, itinerary);
                 JFrame frame = new JFrame("Business Details");
                 frame.setContentPane(detailsPage);
                 frame.setSize(500, 400);
