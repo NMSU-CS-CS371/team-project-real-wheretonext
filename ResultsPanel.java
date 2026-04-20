@@ -68,9 +68,18 @@ public class ResultsPanel extends JPanel {
         restaurantsPanel = createListPanel();
         activitiesPanel = createListPanel();
 
-        tabbedPane.addTab("Hotels", new JScrollPane(hotelsPanel));
-        tabbedPane.addTab("Restaurants", new JScrollPane(restaurantsPanel));
-        tabbedPane.addTab("Activities", new JScrollPane(activitiesPanel));
+        JScrollPane hotelsScroll = new JScrollPane(hotelsPanel);
+        hotelsScroll.getVerticalScrollBar().setUnitIncrement(20); // increase scroll speed
+        
+        JScrollPane restaurantsScroll = new JScrollPane(restaurantsPanel);
+        restaurantsScroll.getVerticalScrollBar().setUnitIncrement(20);
+        
+        JScrollPane activitiesScroll = new JScrollPane(activitiesPanel);
+        activitiesScroll.getVerticalScrollBar().setUnitIncrement(20);
+        
+        tabbedPane.addTab("Hotels", hotelsScroll);
+        tabbedPane.addTab("Restaurants", restaurantsScroll);
+        tabbedPane.addTab("Activities", activitiesScroll);
 
         add(tabbedPane, BorderLayout.CENTER);
     }
