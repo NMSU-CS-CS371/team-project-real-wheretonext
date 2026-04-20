@@ -1,3 +1,16 @@
+/*****************************************************************************************************
+BusinessDetailsPage.java
+Displays detailed information about a single business.
+
+This class creates a panel showing the business name, an image if available, 
+and the detailed information provided by the Yelp API. It also provides a 
+back button to close the details view.
+
+The class is connected to:
+    - ResultsPanel: opens this page when the "View →" button is clicked.
+
+*****************************************************************************************************/
+
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.net.URL;
@@ -6,7 +19,8 @@ import javax.swing.*;
 
 public class BusinessDetailsPage extends JPanel {
 
-    public BusinessDetailsPage(String info) {
+    public BusinessDetailsPage(String info, ItineraryPage itinerary) {
+        // Main layout
         setLayout(new BorderLayout());
         setBackground(Color.WHITE); // white background
 
@@ -27,14 +41,13 @@ public class BusinessDetailsPage extends JPanel {
         centerPanel.setLayout(new BorderLayout());
         centerPanel.setBackground(Color.WHITE);
 
-        // If image_url is in the info (assume second line), load it
-        // You might want to pass image_url separately from YelpApiClient for real data
+        // Label for business image
         JLabel imageLabel = new JLabel();
         imageLabel.setHorizontalAlignment(SwingConstants.CENTER);
         imageLabel.setBackground(Color.WHITE);
         imageLabel.setOpaque(true);
 
-        // Example: extract image_url from the info string if you append it in YelpApiClient
+        // Extract image URL if available
         String imageUrl = null; // default no image
         for (String line : lines) {
             if (line.startsWith("ImageURL:")) {
@@ -43,6 +56,7 @@ public class BusinessDetailsPage extends JPanel {
             }
         }
 
+        // Load and scale image
         if (imageUrl != null && !imageUrl.isEmpty()) {
             try {
                 URL url = new URL(imageUrl);
@@ -57,7 +71,6 @@ public class BusinessDetailsPage extends JPanel {
         centerPanel.add(imageLabel, BorderLayout.NORTH);
 
         // Text area for details
-        //JTextArea detailsArea = new JTextArea(info);
         String displayText = String.join("\n", java.util.Arrays.stream(lines)
          .filter(l -> !l.startsWith("ImageURL:"))
          .toArray(String[]::new));
@@ -85,9 +98,25 @@ public class BusinessDetailsPage extends JPanel {
             SwingUtilities.getWindowAncestor(this).dispose(); // close this window
         });
 
+        // Bottom panel holds the back button and add to itinerary button
         JPanel bottomPanel = new JPanel();
         bottomPanel.setBackground(Color.WHITE);
         bottomPanel.add(backButton);
         add(bottomPanel, BorderLayout.SOUTH);
+
+        // Add to Itinerary button
+        JButton addToItineraryBtn = new JButton("＋ Add to Itinerary");
+        addToItineraryBtn.setFont(new Font("SansSerif", Font.BOLD, 14));
+        addToItineraryBtn.setBackground(new Color(50, 120, 200));
+        addToItineraryBtn.setForeground(Color.WHITE);
+        addToItineraryBtn.setOpaque(true);
+        addToItineraryBtn.setFocusPainted(false);
+        addToItineraryBtn.addActionListener(e -> {
+        itinerary.addBusiness(info);
+        addToItineraryBtn.setText("✓ Saved!");
+        addToItineraryBtn.setBackground(new Color(40, 160, 80));
+        addToItineraryBtn.setEnabled(false);
+    });
+    bottomPanel.add(addToItineraryBtn);
     }
 }
