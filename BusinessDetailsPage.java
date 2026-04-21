@@ -111,12 +111,18 @@ public class BusinessDetailsPage extends JPanel {
         addToItineraryBtn.setForeground(Color.WHITE);
         addToItineraryBtn.setOpaque(true);
         addToItineraryBtn.setFocusPainted(false);
+
         addToItineraryBtn.addActionListener(e -> {
-        itinerary.addBusiness(info);
-        addToItineraryBtn.setText("✓ Saved!");
-        addToItineraryBtn.setBackground(new Color(40, 160, 80));
-        addToItineraryBtn.setEnabled(false);
-    });
-    bottomPanel.add(addToItineraryBtn);
+            itinerary.addBusiness(info);
+
+            addToItineraryBtn.setText("✓ Saved!");
+            addToItineraryBtn.setBackground(new Color(40, 160, 80));
+            addToItineraryBtn.setEnabled(false);
+
+            // close window
+            SwingUtilities.getWindowAncestor(this).dispose();
+        });
+
+        bottomPanel.add(addToItineraryBtn);
     }
 }

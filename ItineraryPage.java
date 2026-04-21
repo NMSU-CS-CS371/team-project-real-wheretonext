@@ -1,18 +1,10 @@
-/************************************************************************************
- * ItineraryPage.java
- * Displays the user's saved itinerary — a list of businesses added from
- * BusinessDetailsPage. Shows each business as a card with a Remove button
- * and a "Clear All" button in the top bar.
- *
- * Connections:
- *   - BusinessDetailsPage: calls addBusiness() to add items here.
- *   - WhereToNextUI: navigation can switch to this panel.
- ************************************************************************************/
-
 import java.awt.*;
 import javax.swing.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.net.URL;
+import java.awt.image.BufferedImage;
+import javax.imageio.ImageIO;
 
 public class ItineraryPage extends JPanel {
 
@@ -20,7 +12,12 @@ public class ItineraryPage extends JPanel {
     private JPanel cardListPanel;
     private JLabel countLabel;
 
-    public ItineraryPage(JFrame parent, JPanel mainPanel) {
+    private JFrame parent;
+    private JPanel previousPanel;
+
+    public ItineraryPage(JFrame parent) {
+        this.parent = parent;
+
         setLayout(new BorderLayout());
         setBackground(Color.WHITE);
 
@@ -32,7 +29,7 @@ public class ItineraryPage extends JPanel {
         JButton backButton = new JButton("← Back");
         backButton.setFont(new Font("SansSerif", Font.PLAIN, 14));
         backButton.addActionListener(e -> {
-            parent.setContentPane(mainPanel);
+            parent.setContentPane(previousPanel);
             parent.revalidate();
         });
         topBar.add(backButton, BorderLayout.WEST);
@@ -78,9 +75,12 @@ public class ItineraryPage extends JPanel {
         refresh();
     }
 
-    /** Called from BusinessDetailsPage to save a business. */
+    public void setPreviousPanel(JPanel panel) {
+        this.previousPanel = panel;
+    }
+
     public void addBusiness(String bizInfo) {
-        if (!businesses.contains(bizInfo)) {   // avoid duplicates
+        if (!businesses.contains(bizInfo)) {
             businesses.add(bizInfo);
             refresh();
         } else {
@@ -90,7 +90,6 @@ public class ItineraryPage extends JPanel {
         }
     }
 
-    /** Rebuild the card list from the current businesses list. */
     private void refresh() {
         cardListPanel.removeAll();
         cardListPanel.setBorder(BorderFactory.createEmptyBorder(10, 15, 10, 15));
@@ -112,17 +111,20 @@ public class ItineraryPage extends JPanel {
             String bizInfo = businesses.get(i);
             String[] lines = bizInfo.split("\n");
 
-            String name    = lines.length > 0 ? lines[0] : "Unknown";
+            String name = lines.length > 0 ? lines[0] : "Unknown";
             String details = "";
-            String extra   = "";
+            String imageUrl = "";
 
             for (String line : lines) {
-                if (line.startsWith("ImageURL:")) continue;
-                if (details.isEmpty() && !line.equals(name))           details = line;
-                else if (extra.isEmpty() && !line.equals(name) && !line.equals(details)) extra = line;
+                if (line.startsWith("ImageURL:")) {
+                    imageUrl = line.replace("ImageURL:", "").trim();
+                    continue;
+                }
+                if (details.isEmpty() && !line.equals(name)) {
+                    details = line;
+                }
             }
 
-            // ── Card ────────────────────────────────────────────────────────
             JPanel card = new JPanel(new BorderLayout(12, 0));
             card.setBackground(Color.WHITE);
             card.setBorder(BorderFactory.createCompoundBorder(
@@ -132,20 +134,38 @@ public class ItineraryPage extends JPanel {
                     BorderFactory.createEmptyBorder(10, 12, 10, 12)
                 )
             ));
-            card.setMaximumSize(new Dimension(Integer.MAX_VALUE, 90));
+            card.setMaximumSize(new Dimension(Integer.MAX_VALUE, 110));
             card.setAlignmentX(Component.LEFT_ALIGNMENT);
 
-            // Number badge
-            JLabel badge = new JLabel(String.valueOf(i + 1), SwingConstants.CENTER);
-            badge.setPreferredSize(new Dimension(32, 32));
-            badge.setFont(new Font("SansSerif", Font.BOLD, 14));
-            badge.setForeground(new Color(50, 120, 200));
-            badge.setOpaque(true);
-            badge.setBackground(new Color(235, 244, 255));
-            badge.setBorder(BorderFactory.createLineBorder(new Color(180, 210, 245), 1, true));
-            card.add(badge, BorderLayout.WEST);
+            // ── IMAGE ─────────────────────────────────────────────
+            JLabel imgLabel = new JLabel();
+            imgLabel.setPreferredSize(new Dimension(90, 80));
+            imgLabel.setOpaque(true);
+            imgLabel.setBackground(new Color(240, 240, 240));
 
-            // Text
+            if (!imageUrl.isEmpty()) {
+                final String finalUrl = imageUrl;
+
+                new SwingWorker<ImageIcon, Void>() {
+                    @Override
+                    protected ImageIcon doInBackground() throws Exception {
+                        BufferedImage img = ImageIO.read(new URL(finalUrl));
+                        Image scaled = img.getScaledInstance(90, 80, Image.SCALE_SMOOTH);
+                        return new ImageIcon(scaled);
+                    }
+
+                    @Override
+                    protected void done() {
+                        try {
+                            imgLabel.setIcon(get());
+                        } catch (Exception ignored) {}
+                    }
+                }.execute();
+            }
+
+            card.add(imgLabel, BorderLayout.WEST);
+
+            // ── TEXT ───────────────────────────────────────────────
             JLabel nameLabel = new JLabel(name);
             nameLabel.setFont(new Font("SansSerif", Font.BOLD, 15));
 
@@ -159,9 +179,10 @@ public class ItineraryPage extends JPanel {
             textPanel.add(nameLabel);
             textPanel.add(Box.createVerticalStrut(3));
             textPanel.add(detailLabel);
+
             card.add(textPanel, BorderLayout.CENTER);
 
-            // Remove button
+            // ── REMOVE BUTTON ─────────────────────────────────────
             JButton removeBtn = new JButton("Remove");
             removeBtn.setFont(new Font("SansSerif", Font.PLAIN, 12));
             removeBtn.setForeground(new Color(180, 50, 50));
@@ -169,10 +190,12 @@ public class ItineraryPage extends JPanel {
             removeBtn.setBorderPainted(false);
             removeBtn.setOpaque(true);
             removeBtn.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+
             removeBtn.addActionListener(e -> {
                 businesses.remove(idx);
                 refresh();
             });
+
             card.add(removeBtn, BorderLayout.EAST);
 
             cardListPanel.add(card);
