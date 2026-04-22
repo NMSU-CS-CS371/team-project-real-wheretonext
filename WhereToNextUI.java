@@ -31,14 +31,14 @@ public class WhereToNextUI extends JFrame {
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
         // Main panel with background image
-        BackgroundPanel mainPanel = new BackgroundPanel("images/background.jpg");
+        BackgroundPanel mainPanel = new BackgroundPanel("images/background2.jpg");
         mainPanel.setLayout(new BoxLayout(mainPanel, BoxLayout.Y_AXIS));
         mainPanel.add(Box.createVerticalStrut(80));
 
         // Title label
         JLabel titleLabel = new JLabel("Where To Next?", SwingConstants.CENTER);
         titleLabel.setFont(new Font("SansSerif", Font.BOLD, 50));
-        titleLabel.setForeground(Color.WHITE);
+        titleLabel.setForeground(Color.BLUE);
         titleLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
         mainPanel.add(titleLabel);
         mainPanel.add(Box.createVerticalStrut(50));
@@ -82,8 +82,9 @@ public class WhereToNextUI extends JFrame {
 
         // Set up Yelp API client, results panel, and search controller
         YelpApiClient apiClient = new YelpApiClient("08ZFB6tYGsw2aek1E-PKQlME7pCTqnwwEe8qiDBa_JTmFUgS7IzHCgAxCYh2UF0MGdCKXHR_8qlMLuUUQQ3j_Si1cJgNoeV8liAmgNhrnOknAaVOlJXgy1iZa6bBaXYx");
-        ItineraryPage itineraryPage = new ItineraryPage(this, mainPanel);
+        ItineraryPage itineraryPage = new ItineraryPage(this);
         ResultsPanel resultsPanel = new ResultsPanel(this, mainPanel, itineraryPage);
+        itineraryPage.setPreviousPanel(resultsPanel);
         SearchController controller = new SearchController(apiClient, resultsPanel);
         
         // Action for searching when user clicks button or presses Enter

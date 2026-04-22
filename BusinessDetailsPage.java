@@ -108,15 +108,21 @@ public class BusinessDetailsPage extends JPanel {
         JButton addToItineraryBtn = new JButton("＋ Add to Itinerary");
         addToItineraryBtn.setFont(new Font("SansSerif", Font.BOLD, 14));
         addToItineraryBtn.setBackground(new Color(50, 120, 200));
-        addToItineraryBtn.setForeground(Color.WHITE);
+        addToItineraryBtn.setForeground(Color.BLACK);
         addToItineraryBtn.setOpaque(true);
         addToItineraryBtn.setFocusPainted(false);
+
         addToItineraryBtn.addActionListener(e -> {
-        itinerary.addBusiness(info);
-        addToItineraryBtn.setText("✓ Saved!");
-        addToItineraryBtn.setBackground(new Color(40, 160, 80));
-        addToItineraryBtn.setEnabled(false);
-    });
-    bottomPanel.add(addToItineraryBtn);
+            itinerary.addBusiness(info);
+
+            addToItineraryBtn.setText("✓ Saved!");
+            addToItineraryBtn.setBackground(new Color(40, 160, 80));
+            addToItineraryBtn.setEnabled(false);
+
+            // close window
+            SwingUtilities.getWindowAncestor(this).dispose();
+        });
+
+        bottomPanel.add(addToItineraryBtn);
     }
 }
