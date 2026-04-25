@@ -108,7 +108,7 @@ public class BusinessDetailsPage extends JPanel {
         JButton addToItineraryBtn = new JButton("＋ Add to Itinerary");
         addToItineraryBtn.setFont(new Font("SansSerif", Font.BOLD, 14));
         addToItineraryBtn.setBackground(new Color(50, 120, 200));
-        addToItineraryBtn.setForeground(Color.WHITE);
+        addToItineraryBtn.setForeground(Color.BLACK);
         addToItineraryBtn.setOpaque(true);
         addToItineraryBtn.setFocusPainted(false);
 

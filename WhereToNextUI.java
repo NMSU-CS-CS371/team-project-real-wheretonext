@@ -31,14 +31,14 @@ public class WhereToNextUI extends JFrame {
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
         // Main panel with background image
-        BackgroundPanel mainPanel = new BackgroundPanel("images/background.jpg");
+        BackgroundPanel mainPanel = new BackgroundPanel("images/background2.jpg");
         mainPanel.setLayout(new BoxLayout(mainPanel, BoxLayout.Y_AXIS));
         mainPanel.add(Box.createVerticalStrut(80));
 
         // Title label
         JLabel titleLabel = new JLabel("Where To Next?", SwingConstants.CENTER);
         titleLabel.setFont(new Font("SansSerif", Font.BOLD, 50));
-        titleLabel.setForeground(Color.WHITE);
+        titleLabel.setForeground(Color.BLUE);
         titleLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
         mainPanel.add(titleLabel);
         mainPanel.add(Box.createVerticalStrut(50));
@@ -62,6 +62,18 @@ public class WhereToNextUI extends JFrame {
         cityField.setMaximumSize(new Dimension(400, 40));
         cityField.setHorizontalAlignment(JTextField.CENTER);
 
+        JLabel daysLabel = new JLabel("Select number of days:");
+        daysLabel.setFont(new Font("SansSerif", Font.PLAIN, 18));
+        daysLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
+
+        // Dropdown for number of days 
+        Integer[] dayOptions = {1, 2, 3, 4, 5, 6, 7};
+        JComboBox<Integer> daysDropdown = new JComboBox<>(dayOptions);
+        daysDropdown.setFont(new Font("SansSerif", Font.PLAIN, 18));
+        daysDropdown.setMaximumSize(new Dimension(100, 30));
+        daysDropdown.setAlignmentX(Component.CENTER_ALIGNMENT);
+
+
         // Button to start search
         JButton goButton = new JButton("Let's Go →");
         goButton.setFont(new Font("SansSerif", Font.BOLD, 18));
@@ -71,8 +83,13 @@ public class WhereToNextUI extends JFrame {
         inputPanel.add(promptLabel);
         inputPanel.add(Box.createVerticalStrut(10));
         inputPanel.add(cityField);
+        inputPanel.add(Box.createVerticalStrut(5));
+        inputPanel.add(daysLabel);
+        inputPanel.add(Box.createVerticalStrut(15));
+        inputPanel.add(daysDropdown);
         inputPanel.add(Box.createVerticalStrut(15));
         inputPanel.add(goButton);
+        inputPanel.add(Box.createVerticalStrut(15));
 
         // Add input panel to main panel
         mainPanel.add(inputPanel);
@@ -98,6 +115,9 @@ public class WhereToNextUI extends JFrame {
             // Categories to search
             List<String> terms = List.of("hotels", "restaurants", "activities");
 
+            int days = (Integer) daysDropdown.getSelectedItem();
+            resultsPanel.setDays(days);
+
             // Perform search and update results panel
             controller.onSearch(city, terms);
             resultsPanel.setCity(city);
@@ -108,6 +128,7 @@ public class WhereToNextUI extends JFrame {
         // Attach search action to button and text field
         goButton.addActionListener(searchAction);
         cityField.addActionListener(searchAction);
+        
     }
 
     public static void main(String[] args) {

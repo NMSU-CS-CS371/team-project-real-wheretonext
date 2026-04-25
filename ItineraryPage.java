@@ -1,10 +1,11 @@
 import java.awt.*;
-import javax.swing.*;
+import java.awt.image.BufferedImage;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
-import java.net.URL;
-import java.awt.image.BufferedImage;
 import javax.imageio.ImageIO;
+import javax.swing.*;
+
 
 public class ItineraryPage extends JPanel {
 

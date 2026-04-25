@@ -1,5 +1,4 @@
 import java.awt.*;
-import java.awt.event.*;
 import java.awt.image.BufferedImage;
 import java.net.URL;
 import java.util.Map;
@@ -13,6 +12,7 @@ public class ResultsPanel extends JPanel {
     private JPanel activitiesPanel;
     private JLabel cityLabel;
     private ItineraryPage itinerary;
+    private int days;
 
     public ResultsPanel(JFrame parent, JPanel mainPanel, ItineraryPage itinerary) {
         this.itinerary = itinerary;
@@ -96,7 +96,6 @@ public class ResultsPanel extends JPanel {
         topBar.setOpaque(false);
         tabbedPane.setOpaque(false);
         tabbedPane.setBackground(new Color(255, 255, 255, 220));
-
         hotelsScroll.setOpaque(false);
         hotelsScroll.getViewport().setOpaque(false);
 
@@ -110,6 +109,10 @@ public class ResultsPanel extends JPanel {
     public void setCity(String city) {
         cityLabel.setText(city);
     }
+
+    public void setDays(int days) {
+    this.days = days;
+}
 
     private JPanel createListPanel() {
         JPanel panel = new JPanel();
