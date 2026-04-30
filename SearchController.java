@@ -1,12 +1,15 @@
 /*****************************************************************************************************
 SearchController.java
-Controller class that handles searches from the GUI and processes Yelp API results.
-
-This class connects:
-    - YelpApiClient: makes API requests for businesses in a given city.
-    - ResultsPanel: displays the search results in categorized tabs (Hotels, Restaurants, Activities).
-
-It filters out businesses with low reviews, formats the results, and sends them to the ResultsPanel.
+Controller class that processes search queries and updates the results panel.
+This class is responsible for:
+    - Receiving search input (city and categories) from the UI.
+    - Calling the YelpApiClient to fetch business data based on the search criteria.
+    - Formatting the results into a readable string format.
+    - Updating the ResultsPanel with the new search results.
+The class is connected to:
+    - WhereToNextUI: receives search input from the UI and triggers the search process.
+    - YelpApiClient: interacts with this class to fetch data from the Yelp API.
+    - ResultsPanel: updates this panel with the formatted search results for display.
 *****************************************************************************************************/
 
 import com.google.gson.*;
@@ -16,17 +19,16 @@ public class SearchController {
     private YelpApiClient apiClient;
     private ResultsPanel resultsPanel;
 
-    // Constructor: links the API client and the results panel
+    // Constructor to initialize the API client and results panel
     public SearchController(YelpApiClient apiClient, ResultsPanel resultsPanel) {
         this.apiClient = apiClient;
         this.resultsPanel = resultsPanel;
     }
 
-    // Called when a search is performed
+    // Method to handle search logic based on city and categories
     public void onSearch(String city, List<String> terms) {
         Map<String, String> results = new HashMap<>();
-        
-        // Get businesses for this category
+
         for (String term : terms) {
             JsonArray businesses = apiClient.search(city, term);
             StringBuilder sb = new StringBuilder();
@@ -35,10 +37,8 @@ public class SearchController {
             for (JsonElement b : businesses) {
                 JsonObject biz = b.getAsJsonObject();
                 int reviewCount = biz.has("review_count") ? biz.get("review_count").getAsInt() : 0;
-                // Skip businesses with <= 20 reviews to ensure quality results
                 if (reviewCount <= 20) continue;
 
-                // Extract business info
                 String name = biz.has("name") ? biz.get("name").getAsString() : "N/A";
                 double rating = biz.has("rating") ? biz.get("rating").getAsDouble() : 0.0;
                 String address = "";
@@ -51,22 +51,35 @@ public class SearchController {
                     }
                 }
 
-            // Format the info for the ResultsPanel
-            sb.append(name)
-            .append("\nImageURL: ").append(biz.has("image_url") ? biz.get("image_url").getAsString() : "")
-            .append("\n📍 ").append(address.trim())
-            .append("\nRating: ").append(rating)
-            .append(" | Reviews: ").append(reviewCount)
-            .append("\n\n");
+                // Extract phone and price
+                String phone = biz.has("display_phone") ? biz.get("display_phone").getAsString() : "N/A";
+                String price = (biz.has("price") && !biz.get("price").isJsonNull()) ? biz.get("price").getAsString() : "Not listed";
 
-            // Limit to 10 businesses per category
-            if (++printed == 10) break;
+                // Extract categories
+                String categories = "";
+                if (biz.has("categories")) {
+                    for (JsonElement cat : biz.getAsJsonArray("categories")) {
+                        categories += cat.getAsJsonObject().get("title").getAsString() + ", ";
+                    }
+                    if (!categories.isEmpty()) categories = categories.substring(0, categories.length() - 2);
+                }
+
+                // Format the business information into a readable string
+                sb.append(name)
+                    .append("\nImageURL: ").append(biz.has("image_url") ? biz.get("image_url").getAsString() : "")
+                    .append("\nRating: ").append(rating)
+                    .append("\n📍 ").append(address.trim())
+                    .append("\n📞 ").append(phone)
+                    .append("\n💲 Price: ").append(price)
+                    .append("\n⭐ Reviews: ").append(reviewCount)
+                    .append("\n\n");
+
+                if (++printed == 10) break;
             }
 
             results.put(term, sb.toString());
         }
 
-        // Show results in the panel
         resultsPanel.showResults(results);
     }
 }
