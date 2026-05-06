@@ -106,7 +106,6 @@ public class WhereToNextUI extends JFrame {
                 return;
             }
 
-            // 🔥 Clear itinerary when starting a new search
             itineraryPage.clearAll();
             itineraryPage.setCity(city);
 
