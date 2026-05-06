@@ -12,7 +12,7 @@ public class ItineraryPage extends JPanel {
     private final List<String> businesses = new ArrayList<>();
     private JPanel cardListPanel;
     private JLabel countLabel;
-    private JLabel cityLabel;
+    private JLabel cityLabel; // ✅ NEW
     private JScrollPane scroll;
 
     private JFrame parent;
@@ -50,7 +50,7 @@ public class ItineraryPage extends JPanel {
         JLabel title = new JLabel("My Itinerary", SwingConstants.CENTER);
         title.setFont(new Font("SansSerif", Font.BOLD, 22));
         title.setAlignmentX(Component.CENTER_ALIGNMENT);
-        
+
         cityLabel = new JLabel("No destination selected", SwingConstants.CENTER);
         cityLabel.setFont(new Font("SansSerif", Font.PLAIN, 13));
         cityLabel.setForeground(new Color(100, 100, 100));
@@ -273,7 +273,7 @@ public class ItineraryPage extends JPanel {
                 card.add(badge, BorderLayout.WEST);
 
                 JLabel nameLabel = new JLabel(name);
-                nameLabel.setFont(new Font("SansSerif", Font.BOLD, 13));
+                nameLabel.setFont(new Font("SansSerif", Font.BOLD, 16));
                 nameLabel.setForeground(new Color(50, 120, 200));
                 nameLabel.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
 
@@ -290,7 +290,7 @@ public class ItineraryPage extends JPanel {
                 });
 
                 JLabel addressLabel = new JLabel(address);
-                addressLabel.setFont(new Font("SansSerif", Font.PLAIN, 11));
+                addressLabel.setFont(new Font("SansSerif", Font.PLAIN, 15));
                 addressLabel.setForeground(new Color(120, 120, 120));
 
                 JPanel textPanel = new JPanel();
