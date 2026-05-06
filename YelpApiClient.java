@@ -2,11 +2,11 @@
 YelpApiClient.java
 Handles requests to the Yelp API for business search.
 
-This class:
-    - Uses an API key to authenticate requests.
-    - Sends a search to Yelp for a given city and term (hotels, restaurants, activities).
-    - Returns results as a JsonArray and passed to SearchController to process and display.
+This class stores the API key and provides a method to perform a search based on a city and search term. 
+It uses Java's HttpClient to send requests and Gson to parse the JSON responses.
 
+The class is connected to:
+    - SearchController: interacts with this class to fetch data from the Yelp API based on user search input.
 *****************************************************************************************************/
 
 import java.net.URI;

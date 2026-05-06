@@ -1,14 +1,14 @@
 /*****************************************************************************************************
 BusinessDetailsPage.java
-Displays detailed information about a single business.
 
+Displays detailed information about a single business.
 This class creates a panel showing the business name, an image if available, 
 and the detailed information provided by the Yelp API. It also provides a 
 back button to close the details view.
 
 The class is connected to:
     - ResultsPanel: opens this page when the "View →" button is clicked.
-
+    - ItineraryPage: allows users to add the business to their itinerary from this page.
 *****************************************************************************************************/
 
 import java.awt.*;

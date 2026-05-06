@@ -1,3 +1,18 @@
+/****************************************************************************************************
+ ResultsPanel.java
+ Displays the search results for hotels, restaurants, and activities in a tabbed interface.
+ 
+ This panel is shown after the user performs a search and receives results from the Yelp API. 
+ It organizes the results into three tabs: Hotels, Restaurants, and Activities. Each tab lists 
+ the businesses with their name, details, and an image thumbnail. Users can click on a business 
+ to view more details or add it to their itinerary.
+
+ The class is connected to:
+     - SearchController: receives processed search results from the controller to display in the tabs.
+     - BusinessDetailsPage: opens this page when a business name is clicked for more information.
+     - ItineraryPage: allows users to add businesses to their itinerary directly from this panel.
+*****************************************************************************************************/
+
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.net.URL;
@@ -5,6 +20,7 @@ import java.util.Map;
 import javax.imageio.ImageIO;
 import javax.swing.*;
 
+// Panel to display search results in tabs for hotels, restaurants, and activities
 public class ResultsPanel extends JPanel {
     private JTabbedPane tabbedPane;
     private JPanel hotelsPanel;
@@ -14,6 +30,7 @@ public class ResultsPanel extends JPanel {
     private ItineraryPage itinerary;
     private int days;
 
+    // Constructor to set up the results panel with background, tabs, and navigation buttons
     public ResultsPanel(JFrame parent, JPanel mainPanel, ItineraryPage itinerary) {
         this.itinerary = itinerary;
 
