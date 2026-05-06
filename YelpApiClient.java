@@ -38,6 +38,7 @@ public class YelpApiClient {
                     .GET()
                     .build();
 
+            // Send the request and parse the response
             HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
             JsonObject json = JsonParser.parseString(response.body()).getAsJsonObject();
 

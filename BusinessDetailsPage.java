@@ -20,11 +20,10 @@ import javax.swing.*;
 public class BusinessDetailsPage extends JPanel {
 
     public BusinessDetailsPage(String info, ItineraryPage itinerary) {
-        // Main layout
+        // Set up layout and background
         setLayout(new BorderLayout());
-        setBackground(Color.WHITE); // white background
+        setBackground(Color.WHITE);
 
-        // Split info to extract first line as name
         String[] lines = info.split("\n");
         String businessName = lines[0];
 
@@ -34,21 +33,21 @@ public class BusinessDetailsPage extends JPanel {
         title.setForeground(Color.BLACK);
         title.setOpaque(true);
         title.setBackground(Color.WHITE);
+        title.setBorder(BorderFactory.createEmptyBorder(15, 10, 10, 10));
         add(title, BorderLayout.NORTH);
 
-        // Panel for image and details
-        JPanel centerPanel = new JPanel();
-        centerPanel.setLayout(new BorderLayout());
-        centerPanel.setBackground(Color.WHITE);
+        // Single scrollable panel for image + info
+        JPanel contentPanel = new JPanel();
+        contentPanel.setLayout(new BoxLayout(contentPanel, BoxLayout.Y_AXIS));
+        contentPanel.setBackground(Color.WHITE);
 
-        // Label for business image
+        // Image
         JLabel imageLabel = new JLabel();
         imageLabel.setHorizontalAlignment(SwingConstants.CENTER);
-        imageLabel.setBackground(Color.WHITE);
-        imageLabel.setOpaque(true);
+        imageLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
 
-        // Extract image URL if available
-        String imageUrl = null; // default no image
+        // Extract image URL from info lines
+        String imageUrl = null;
         for (String line : lines) {
             if (line.startsWith("ImageURL:")) {
                 imageUrl = line.replace("ImageURL:", "").trim();
@@ -56,73 +55,70 @@ public class BusinessDetailsPage extends JPanel {
             }
         }
 
-        // Load and scale image
+        // keeps the original aspect ratio for images
         if (imageUrl != null && !imageUrl.isEmpty()) {
             try {
                 URL url = new URL(imageUrl);
                 BufferedImage img = ImageIO.read(url);
-                Image scaled = img.getScaledInstance(400, 200, Image.SCALE_SMOOTH);
+                int imgWidth = img.getWidth();
+                int imgHeight = img.getHeight();
+                int maxWidth = 400;
+                int maxHeight = 300;
+                double scale = Math.min((double) maxWidth / imgWidth, (double) maxHeight / imgHeight);
+                int newWidth = (int) (imgWidth * scale);
+                int newHeight = (int) (imgHeight * scale);
+                Image scaled = img.getScaledInstance(newWidth, newHeight, Image.SCALE_SMOOTH);
                 imageLabel.setIcon(new ImageIcon(scaled));
-            } catch (Exception e) {
+            } 
+            catch (Exception e) {
                 e.printStackTrace();
             }
         }
 
-        centerPanel.add(imageLabel, BorderLayout.NORTH);
+        contentPanel.add(imageLabel);
+        contentPanel.add(Box.createVerticalStrut(10));
 
-        // Text area for details
-        String displayText = String.join("\n", java.util.Arrays.stream(lines)
-         .filter(l -> !l.startsWith("ImageURL:"))
-         .toArray(String[]::new));
-        JTextArea detailsArea = new JTextArea(displayText);
-        
-        detailsArea.setEditable(false);
-        detailsArea.setLineWrap(true);
-        detailsArea.setWrapStyleWord(true);
-        detailsArea.setFont(new Font("Monospaced", Font.PLAIN, 16));
-        detailsArea.setBackground(Color.WHITE);
-        detailsArea.setForeground(Color.BLACK);
-        detailsArea.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
+        // Info labels
+        JPanel infoPanel = new JPanel();
+        infoPanel.setLayout(new BoxLayout(infoPanel, BoxLayout.Y_AXIS));
+        infoPanel.setBackground(Color.WHITE);
+        infoPanel.setBorder(BorderFactory.createEmptyBorder(10, 20, 10, 20));
+        infoPanel.setAlignmentX(Component.CENTER_ALIGNMENT);
 
-        centerPanel.add(new JScrollPane(detailsArea), BorderLayout.CENTER);
+        // Skip the first line (business name) and the image URL line, display the rest
+        for (String line : lines) {
+            if (line.equals(businessName) || line.startsWith("ImageURL:")) continue;
+            JLabel infoLabel = new JLabel(line);
+            infoLabel.setFont(new Font("SansSerif", Font.PLAIN, 14));
+            infoLabel.setBorder(BorderFactory.createEmptyBorder(4, 0, 4, 0));
+            infoLabel.setAlignmentX(Component.LEFT_ALIGNMENT);
+            infoLabel.setForeground(Color.BLACK);
+            infoPanel.add(infoLabel);
+        }
 
-        add(centerPanel, BorderLayout.CENTER);
+        contentPanel.add(infoPanel);
+
+        // Make content scrollable
+        JScrollPane scrollPane = new JScrollPane(contentPanel);
+        scrollPane.getVerticalScrollBar().setUnitIncrement(20);
+        scrollPane.setBorder(null);
+        add(scrollPane, BorderLayout.CENTER);
+
+        // Bottom panel with just back button
+        JPanel bottomPanel = new JPanel();
+        bottomPanel.setBackground(Color.WHITE);
 
         // Back button
         JButton backButton = new JButton("← Back");
         backButton.setFont(new Font("SansSerif", Font.BOLD, 16));
-        backButton.setBackground(new Color(221, 221, 221)); // light gray
-        backButton.setForeground(new Color(51, 51, 51)); // dark gray
+        backButton.setBackground(new Color(221, 221, 221));
+        backButton.setForeground(new Color(51, 51, 51));
         backButton.setFocusPainted(false);
         backButton.addActionListener(e -> {
-            SwingUtilities.getWindowAncestor(this).dispose(); // close this window
-        });
-
-        // Bottom panel holds the back button and add to itinerary button
-        JPanel bottomPanel = new JPanel();
-        bottomPanel.setBackground(Color.WHITE);
-        bottomPanel.add(backButton);
-        add(bottomPanel, BorderLayout.SOUTH);
-
-        // Add to Itinerary button
-        JButton addToItineraryBtn = new JButton("＋ Add to Itinerary");
-        addToItineraryBtn.setFont(new Font("SansSerif", Font.BOLD, 14));
-        addToItineraryBtn.setBackground(new Color(50, 120, 200));
-        addToItineraryBtn.setForeground(Color.BLACK);
-        addToItineraryBtn.setOpaque(true);
-        addToItineraryBtn.setFocusPainted(false);
-
-        addToItineraryBtn.addActionListener(e -> {
-            itinerary.addBusiness(info);
-
-            addToItineraryBtn.setText("✓ Saved!");
-            addToItineraryBtn.setBackground(new Color(40, 160, 80));
-            addToItineraryBtn.setEnabled(false);
-
-            // close window
             SwingUtilities.getWindowAncestor(this).dispose();
         });
+        bottomPanel.add(backButton);
 
-        bottomPanel.add(addToItineraryBtn);
+        add(bottomPanel, BorderLayout.SOUTH);
     }
 }

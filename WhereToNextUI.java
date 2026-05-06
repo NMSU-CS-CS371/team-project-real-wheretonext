@@ -12,7 +12,6 @@ and activities. It connects with the following classes:
  The class sets up the layout, input fields, buttons, and handles user interactions.
 *****************************************************************************************************/
 
-// Imports 
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
@@ -24,18 +23,15 @@ import javax.swing.*;
 public class WhereToNextUI extends JFrame {
 
     public WhereToNextUI() {
-        // Set up main window
         setTitle("WhereToNext");
         setSize(900, 700);
         setLocationRelativeTo(null);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
-        // Main panel with background image
         BackgroundPanel mainPanel = new BackgroundPanel("images/background2.jpg");
         mainPanel.setLayout(new BoxLayout(mainPanel, BoxLayout.Y_AXIS));
         mainPanel.add(Box.createVerticalStrut(80));
 
-        // Title label
         JLabel titleLabel = new JLabel("Where To Next?", SwingConstants.CENTER);
         titleLabel.setFont(new Font("SansSerif", Font.BOLD, 50));
         titleLabel.setForeground(Color.BLUE);
@@ -43,7 +39,6 @@ public class WhereToNextUI extends JFrame {
         mainPanel.add(titleLabel);
         mainPanel.add(Box.createVerticalStrut(50));
 
-        // Input panel for city entry
         JPanel inputPanel = new JPanel();
         inputPanel.setLayout(new BoxLayout(inputPanel, BoxLayout.Y_AXIS));
         inputPanel.setBackground(new Color(255, 255, 255, 220));
@@ -51,43 +46,71 @@ public class WhereToNextUI extends JFrame {
         inputPanel.setAlignmentX(Component.CENTER_ALIGNMENT);
         inputPanel.setMaximumSize(new Dimension(500, 400));
 
-        // Label prompting user to enter city
         JLabel promptLabel = new JLabel("Enter your destination city:");
         promptLabel.setFont(new Font("SansSerif", Font.PLAIN, 18));
         promptLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
 
-        // Text field for city input
         JTextField cityField = new JTextField();
         cityField.setFont(new Font("SansSerif", Font.PLAIN, 20));
         cityField.setMaximumSize(new Dimension(400, 40));
         cityField.setHorizontalAlignment(JTextField.CENTER);
 
-        // Button to start search
+        JLabel daysLabel = new JLabel("Select number of days:");
+        daysLabel.setFont(new Font("SansSerif", Font.PLAIN, 18));
+        daysLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
+
+        Integer[] dayOptions = {1, 2, 3, 4, 5, 6, 7};
+        JComboBox<Integer> daysDropdown = new JComboBox<>(dayOptions);
+        daysDropdown.setFont(new Font("SansSerif", Font.PLAIN, 18));
+        daysDropdown.setMaximumSize(new Dimension(100, 30));
+        daysDropdown.setAlignmentX(Component.CENTER_ALIGNMENT);
+
         JButton goButton = new JButton("Let's Go →");
         goButton.setFont(new Font("SansSerif", Font.BOLD, 18));
         goButton.setAlignmentX(Component.CENTER_ALIGNMENT);
 
-        // Add components to input panel
+        // View Itinerary button
+        JButton viewItineraryBtn = new JButton("📋 View My Itinerary");
+        viewItineraryBtn.setFont(new Font("SansSerif", Font.PLAIN, 15));
+        viewItineraryBtn.setForeground(new Color(50, 120, 200));
+        viewItineraryBtn.setBackground(new Color(235, 244, 255));
+        viewItineraryBtn.setOpaque(true);
+        viewItineraryBtn.setBorderPainted(false);
+        viewItineraryBtn.setAlignmentX(Component.CENTER_ALIGNMENT);
+        viewItineraryBtn.setCursor(java.awt.Cursor.getPredefinedCursor(java.awt.Cursor.HAND_CURSOR));
+
         inputPanel.add(promptLabel);
         inputPanel.add(Box.createVerticalStrut(10));
         inputPanel.add(cityField);
+        inputPanel.add(Box.createVerticalStrut(5));
+        inputPanel.add(daysLabel);
+        inputPanel.add(Box.createVerticalStrut(15));
+        inputPanel.add(daysDropdown);
         inputPanel.add(Box.createVerticalStrut(15));
         inputPanel.add(goButton);
+        inputPanel.add(Box.createVerticalStrut(10));
+        inputPanel.add(viewItineraryBtn);
+        inputPanel.add(Box.createVerticalStrut(15));
 
-        // Add input panel to main panel
         mainPanel.add(inputPanel);
         mainPanel.add(Box.createVerticalGlue());
         add(mainPanel);
         setVisible(true);
 
-        // Set up Yelp API client, results panel, and search controller
-        YelpApiClient apiClient = new YelpApiClient("08ZFB6tYGsw2aek1E-PKQlME7pCTqnwwEe8qiDBa_JTmFUgS7IzHCgAxCYh2UF0MGdCKXHR_8qlMLuUUQQ3j_Si1cJgNoeV8liAmgNhrnOknAaVOlJXgy1iZa6bBaXYx");
+        YelpApiClient apiClient = new YelpApiClient("32abfY09xBAtrWF5QIVDaSht--bcVmUFrudLnR1iXccggHVYovU1Do3TD3uAV6ZL4ppOzv3-aIZjAshQUJcF8eeuDuE0QGXUKhG8GgboB1P_W6BYIOkvp1MY_LnvaXYx");
         ItineraryPage itineraryPage = new ItineraryPage(this);
         ResultsPanel resultsPanel = new ResultsPanel(this, mainPanel, itineraryPage);
         itineraryPage.setPreviousPanel(resultsPanel);
         SearchController controller = new SearchController(apiClient, resultsPanel);
-        
-        // Action for searching when user clicks button or presses Enter
+
+        // View Itinerary button goes directly to itinerary from main screen
+        // Back from itinerary will return to main panel in this case
+        viewItineraryBtn.addActionListener(e -> {
+            itineraryPage.setPreviousPanel(mainPanel);
+            setContentPane(itineraryPage);
+            revalidate();
+        });
+
         ActionListener searchAction = e -> {
             String city = cityField.getText().trim();
             if (city.isEmpty()) {
@@ -95,23 +118,25 @@ public class WhereToNextUI extends JFrame {
                 return;
             }
 
-            // Categories to search
             List<String> terms = List.of("hotels", "restaurants", "activities");
+            int days = (Integer) daysDropdown.getSelectedItem();
+            resultsPanel.setDays(days);
 
-            // Perform search and update results panel
             controller.onSearch(city, terms);
             resultsPanel.setCity(city);
+
+            // When coming from search, itinerary back button returns to results
+            itineraryPage.setPreviousPanel(resultsPanel);
+
             setContentPane(resultsPanel);
             revalidate();
         };
 
-        // Attach search action to button and text field
         goButton.addActionListener(searchAction);
         cityField.addActionListener(searchAction);
     }
 
     public static void main(String[] args) {
-        // Start GUI on Event Dispatch Thread
         SwingUtilities.invokeLater(() -> new WhereToNextUI());
     }
 }
