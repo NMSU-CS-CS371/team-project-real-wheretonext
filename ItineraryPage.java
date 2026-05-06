@@ -12,7 +12,7 @@ public class ItineraryPage extends JPanel {
     private final List<String> businesses = new ArrayList<>();
     private JPanel cardListPanel;
     private JLabel countLabel;
-    private JLabel cityLabel; // ✅ NEW
+    private JLabel cityLabel;
     private JScrollPane scroll;
 
     private JFrame parent;
