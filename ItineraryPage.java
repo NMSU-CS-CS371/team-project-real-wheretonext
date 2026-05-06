@@ -12,14 +12,13 @@ public class ItineraryPage extends JPanel {
     private final List<String> businesses = new ArrayList<>();
     private JPanel cardListPanel;
     private JLabel countLabel;
+    private JLabel cityLabel;
     private JScrollPane scroll;
 
     private JFrame parent;
     private JPanel previousPanel;
 
-    // File where itinerary is saved
     private static final String SAVE_FILE = "itinerary.dat";
-    // Delimiter to separate entries in the file
     private static final String DELIMITER = "===ENTRY===";
 
     public ItineraryPage(JFrame parent) {
@@ -52,13 +51,20 @@ public class ItineraryPage extends JPanel {
         title.setFont(new Font("SansSerif", Font.BOLD, 22));
         title.setAlignmentX(Component.CENTER_ALIGNMENT);
 
+        cityLabel = new JLabel("No destination selected", SwingConstants.CENTER);
+        cityLabel.setFont(new Font("SansSerif", Font.PLAIN, 13));
+        cityLabel.setForeground(new Color(100, 100, 100));
+        cityLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
+
         countLabel = new JLabel("0 places saved", SwingConstants.CENTER);
         countLabel.setFont(new Font("SansSerif", Font.PLAIN, 12));
         countLabel.setForeground(new Color(120, 120, 120));
         countLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
 
         titleBlock.add(title);
+        titleBlock.add(cityLabel);
         titleBlock.add(countLabel);
+
         topBar.add(titleBlock, BorderLayout.CENTER);
 
         JButton clearButton = new JButton("Clear all");
@@ -88,6 +94,10 @@ public class ItineraryPage extends JPanel {
         refresh();
     }
 
+    public void setCity(String city) {
+        cityLabel.setText("Trip to: " + city);
+    }
+
     public void setPreviousPanel(JPanel panel) {
         this.previousPanel = panel;
     }
@@ -104,7 +114,12 @@ public class ItineraryPage extends JPanel {
         }
     }
 
-    // Save all businesses to disk
+    public void clearAll() {
+        businesses.clear();
+        saveToFile();
+        refresh();
+    }
+
     private void saveToFile() {
         try (BufferedWriter writer = new BufferedWriter(new FileWriter(SAVE_FILE))) {
             for (int i = 0; i < businesses.size(); i++) {
@@ -118,7 +133,6 @@ public class ItineraryPage extends JPanel {
         }
     }
 
-    // Load businesses from disk on startup
     private void loadFromFile() {
         File file = new File(SAVE_FILE);
         if (!file.exists()) return;
@@ -259,7 +273,7 @@ public class ItineraryPage extends JPanel {
                 card.add(badge, BorderLayout.WEST);
 
                 JLabel nameLabel = new JLabel(name);
-                nameLabel.setFont(new Font("SansSerif", Font.BOLD, 13));
+                nameLabel.setFont(new Font("SansSerif", Font.BOLD, 16));
                 nameLabel.setForeground(new Color(50, 120, 200));
                 nameLabel.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
 
@@ -276,7 +290,7 @@ public class ItineraryPage extends JPanel {
                 });
 
                 JLabel addressLabel = new JLabel(address);
-                addressLabel.setFont(new Font("SansSerif", Font.PLAIN, 11));
+                addressLabel.setFont(new Font("SansSerif", Font.PLAIN, 15));
                 addressLabel.setForeground(new Color(120, 120, 120));
 
                 JPanel textPanel = new JPanel();
