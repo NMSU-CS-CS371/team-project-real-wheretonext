@@ -12,7 +12,7 @@ public class ItineraryPage extends JPanel {
     private final List<String> businesses = new ArrayList<>();
     private JPanel cardListPanel;
     private JLabel countLabel;
-    private JLabel cityLabel; // ✅ NEW
+    private JLabel cityLabel;
     private JScrollPane scroll;
 
     private JFrame parent;
@@ -50,8 +50,7 @@ public class ItineraryPage extends JPanel {
         JLabel title = new JLabel("My Itinerary", SwingConstants.CENTER);
         title.setFont(new Font("SansSerif", Font.BOLD, 22));
         title.setAlignmentX(Component.CENTER_ALIGNMENT);
-
-        // ✅ NEW city label
+        
         cityLabel = new JLabel("No destination selected", SwingConstants.CENTER);
         cityLabel.setFont(new Font("SansSerif", Font.PLAIN, 13));
         cityLabel.setForeground(new Color(100, 100, 100));
@@ -63,7 +62,7 @@ public class ItineraryPage extends JPanel {
         countLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
 
         titleBlock.add(title);
-        titleBlock.add(cityLabel); // ✅ added
+        titleBlock.add(cityLabel);
         titleBlock.add(countLabel);
 
         topBar.add(titleBlock, BorderLayout.CENTER);
