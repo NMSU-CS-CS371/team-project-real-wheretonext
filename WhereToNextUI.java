@@ -1,15 +1,6 @@
 /*****************************************************************************************************
 WhereToNextUI.java
 Main GUI class for the WhereToNext application.
- 
-This class creates the main window where users can enter a city to search for hotels, restaurants,
-and activities. It connects with the following classes:
-    - YelpApiClient: handles the API requests to Yelp for search results.
-    - SearchController: processes searches and filters results.
-    - ResultsPanel: displays search results in tabs and allows viewing details.
-    - BackgroundPanel: displays the background image for the main panel.
-
- The class sets up the layout, input fields, buttons, and handles user interactions.
 *****************************************************************************************************/
 
 import java.awt.Color;
@@ -69,7 +60,6 @@ public class WhereToNextUI extends JFrame {
         goButton.setFont(new Font("SansSerif", Font.BOLD, 18));
         goButton.setAlignmentX(Component.CENTER_ALIGNMENT);
 
-        // View Itinerary button
         JButton viewItineraryBtn = new JButton("📋 View My Itinerary");
         viewItineraryBtn.setFont(new Font("SansSerif", Font.PLAIN, 15));
         viewItineraryBtn.setForeground(new Color(50, 120, 200));
@@ -103,8 +93,6 @@ public class WhereToNextUI extends JFrame {
         itineraryPage.setPreviousPanel(resultsPanel);
         SearchController controller = new SearchController(apiClient, resultsPanel);
 
-        // View Itinerary button goes directly to itinerary from main screen
-        // Back from itinerary will return to main panel in this case
         viewItineraryBtn.addActionListener(e -> {
             itineraryPage.setPreviousPanel(mainPanel);
             setContentPane(itineraryPage);
@@ -118,6 +106,10 @@ public class WhereToNextUI extends JFrame {
                 return;
             }
 
+            // 🔥 Clear itinerary when starting a new search
+            itineraryPage.clearAll();
+            itineraryPage.setCity(city);
+
             List<String> terms = List.of("hotels", "restaurants", "activities");
             int days = (Integer) daysDropdown.getSelectedItem();
             resultsPanel.setDays(days);
@@ -125,7 +117,6 @@ public class WhereToNextUI extends JFrame {
             controller.onSearch(city, terms);
             resultsPanel.setCity(city);
 
-            // When coming from search, itinerary back button returns to results
             itineraryPage.setPreviousPanel(resultsPanel);
 
             setContentPane(resultsPanel);
