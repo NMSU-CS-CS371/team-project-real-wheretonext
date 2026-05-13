@@ -9,11 +9,11 @@ WhereToNext is a Java Swing app that helps you explore cities you would like to 
 - Simple and clean GUI with background images and tabs.
 
 ## Getting Started
-**Step 1 — Clone the repository:** git@github.com:NMSU-CS-CS371/team-project-real-wheretonext.git
-**Step 2 — Navigate into the project folder:** cd team-project-real-wheretonext
-**Step 3 — Compile the project:** make
-**Step 4 — Run the project:** make run
-**To clean compiled files:** make clean
+**Step 1 — Clone the repository:** git@github.com:NMSU-CS-CS371/team-project-real-wheretonext.git  
+**Step 2 — Navigate into the project folder:** cd team-project-real-wheretonext  
+**Step 3 — Compile the project:** make  
+**Step 4 — Run the project:** make run  
+**To clean compiled files:** make clean  
 
 ## Dependencies
 
